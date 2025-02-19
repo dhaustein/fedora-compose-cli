@@ -1,0 +1,61 @@
+{
+    "header": {
+        "type": "productmd.rpms",
+        "version": "1.2"
+    },
+    "payload": {
+        "compose": {
+            "date": "20250219",
+            "id": "Fedora-Rawhide-20250219.n.0",
+            "respin": 0,
+            "type": "nightly"
+        },
+        "rpms": {
+            "Everything": {
+                "x86_64": {
+                    "0ad-0:0.0.26-28.fc42.src": {
+                        "0ad-0:0.0.26-28.fc42.src": {
+                            "category": "source",
+                            "path": "Everything/source/tree/Packages/0/0ad-0.0.26-28.fc42.src.rpm",
+                            "sigkey": "31645531"
+                        },
+                        "0ad-0:0.0.26-28.fc42.x86_64": {
+                            "category": "binary",
+                            "path": "Everything/x86_64/os/Packages/0/0ad-0.0.26-28.fc42.x86_64.rpm",
+                            "sigkey": "31645531"
+                        },
+                        "0ad-debuginfo-0:0.0.26-28.fc42.x86_64": {
+                            "category": "debug",
+                            "path": "Everything/x86_64/debug/tree/Packages/0/0ad-debuginfo-0.0.26-28.fc42.x86_64.rpm",
+                            "sigkey": "31645531"
+                        },
+                        "0ad-debugsource-0:0.0.26-28.fc42.x86_64": {
+                            "category": "debug",
+                            "path": "Everything/x86_64/debug/tree/Packages/0/0ad-debugsource-0.0.26-28.fc42.x86_64.rpm",
+                            "sigkey": "31645531"
+                        }
+                    },
+                    "upgraded-0:0.0.28-2.fc42.src": {
+                        "0ad-data-0:0.0.26-11.fc42.noarch": {
+                            "category": "binary",
+                            "path": "Everything/x86_64/os/Packages/0/0ad-data-0.0.26-11.fc42.noarch.rpm",
+                            "sigkey": "31645531"
+                        },
+                        "0ad-data-0:0.0.26-11.fc42.src": {
+                            "category": "source",
+                            "path": "Everything/source/tree/Packages/0/0ad-data-0.0.26-11.fc42.src.rpm",
+                            "sigkey": "31645531"
+                        }
+                    },
+                    "HireMe-0:42.0.2-2.fc42.src": {
+                        "HireMe-0:42.0.2-2.fc42.src": {
+                            "category": "source",
+                            "path": "Everything/source/tree/Packages/h/HireMe-0:42.0.2-2.fc42.src.rpm",
+                            "sigkey": "3164777531"
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,10 @@
+[project]
+name = "fedora-compose-cli"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "ijson>=3.3.0",
+    "ruff>=0.9.6",
+]
