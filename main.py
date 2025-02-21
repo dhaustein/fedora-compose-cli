@@ -57,8 +57,13 @@ def get_changed_pkgs(
 
 def main():
     # Parse both JSON files and create a set of all packages for old and new version
-    old_rpms = parse_rpm_json_file("compose_metadata/rpms_1802.json", PREFIX)
-    new_rpms = parse_rpm_json_file("compose_metadata/rpms_1902.json", PREFIX)
+    with ProcessPoolExecutor() as pool:
+        result = pool.map(
+            parse_rpm_json_file,
+            ["compose_metadata/rpms_1802.json", "compose_metadata/rpms_1902.json"],
+            [PREFIX, PREFIX],
+        )
+    old_rpms, new_rpms = result
 
     # Find new items
     added = get_added_pkgs(old_rpms, new_rpms)
