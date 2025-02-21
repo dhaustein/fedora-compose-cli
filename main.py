@@ -1,3 +1,4 @@
+import argparse
 from concurrent.futures import ProcessPoolExecutor
 from difflib import SequenceMatcher
 from time import perf_counter
@@ -56,37 +57,41 @@ def get_changed_pkgs(
 
 
 def main():
+    parser = argparse.ArgumentParser(
+        description="""Python CLI tools to parse two Fedora Rawhide composes and return lists of packages that
+          have been removed, added or changed between the two versions."""
+    )
+    parser.add_argument(dest="old_rpm", help="Filepath to old RPM JSON file")
+    parser.add_argument(dest="new_rpm", help="Filepath to new RPM JSON file")
+    args = parser.parse_args()
+
     # Parse both JSON files and create a set of all packages for old and new version
     with ProcessPoolExecutor() as pool:
         result = pool.map(
             parse_rpm_json_file,
-            ["compose_metadata/rpms_1802.json", "compose_metadata/rpms_1902.json"],
+            # ["compose_metadata/rpms_1802.json", "compose_metadata/rpms_1902.json"],
+            [args.old_rpm, args.new_rpm],
             [PREFIX, PREFIX],
         )
     old_rpms, new_rpms = result
 
-    # Find new items
-    added = get_added_pkgs(old_rpms, new_rpms)
-
-    # Find removed items
     removed = get_removed_pkgs(old_rpms, new_rpms)
-
-    # Find changed items
+    added = get_added_pkgs(old_rpms, new_rpms)
     changed = get_changed_pkgs(removed, added)
 
-    print(f"CHANGED: {changed}")
-
-    # Print only completely new additions
-    new_additions = [
-        i for i in added if i not in set(changed["new"]).union(changed["old"])
-    ]
-    print(f"ADDED: {new_additions}")
-
-    # Print only packages that have been completely removed
-    removed_packages = [
+    # Get only packages that have been completely removed
+    completely_removed = [
         i for i in removed if i not in set(changed["new"]).union(changed["old"])
     ]
-    print(f"REMOVED: {removed_packages}")
+    # Get only completely new additions that have not existed before
+    completely_new = [
+        i for i in added if i not in set(changed["new"]).union(changed["old"])
+    ]
+
+    # TODO pretty output should be templated
+    print(f"REMOVED: {completely_removed}")
+    print(f"ADDED: {completely_new}")
+    print(f"CHANGED: {changed}")
 
 
 if __name__ == "__main__":
