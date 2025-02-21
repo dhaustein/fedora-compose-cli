@@ -1,64 +1,86 @@
+from concurrent.futures import ProcessPoolExecutor
 from difflib import SequenceMatcher
 from time import perf_counter
+from typing import Dict, List
 
 import ijson
 
-PAYLOADS_RAW: dict[str, list[str]] = {"old": [], "new": []}
+PREFIX: str = "payload.rpms.Everything.x86_64"
 
 
-def main():
-    # Parse both JSON files and create a set of all packages
-    # with open("tests/x86_old.json", "br") as f:
-    with open("compose_metadata/rpms_1802.json", "br") as f:
-        arch_pkgs = ijson.kvitems(f, "payload.rpms.Everything.x86_64", use_float=True)
-        for k, v in arch_pkgs:
-            PAYLOADS_RAW["old"].append(k)
+def parse_rpm_json_file(filepath: str, prefix: str) -> set[str]:
+    # TODO use path from Pathlib instead of str
+    payloads = set()
+    with open(filepath, "br") as f:
+        pkgs = ijson.kvitems(f, prefix, use_float=True)
+        for k, v in pkgs:
+            payloads.add(k)
 
-    # with open("tests/x86_new.json", "br") as f:
-    with open("compose_metadata/rpms_1902.json", "br") as f:
-        arch_pkgs = ijson.kvitems(f, "payload.rpms.Everything.x86_64", use_float=True)
-        for k, v in arch_pkgs:
-            PAYLOADS_RAW["new"].append(k)
+    return payloads
 
-    old_payload = set(PAYLOADS_RAW["old"])
-    new_payload = set(PAYLOADS_RAW["new"])
 
-    # Find exact matches (packages that did not change)
-    # unchanged = old_payload.intersection(new_payload)
-    # print("NOCHANGE:", list(unchanged))
+def get_nochanged_pkgs(old: set[str], new: set[str]) -> set[str]:
+    return old.intersection(new)
 
-    # Find new items
-    added = new_payload - old_payload
 
-    # Find removed items
-    removed = old_payload - new_payload
+def get_added_pkgs(old: set[str], new: set[str]) -> set[str]:
+    return new - old
 
-    # Find changes using similarity calculation
-    all_changes = set()
-    changed_out = []
-    for old_item in removed:
-        for new_item in added:
+
+def get_removed_pkgs(old: set[str], new: set[str]) -> set[str]:
+    return old - new
+
+
+def get_changed_pkgs(
+    removed_pkgs: set[str], added_pkgs: set[str]
+) -> Dict[str, List[str]]:
+    changed: Dict[str, List[str]] = {"old": [], "new": []}
+
+    for old_item in removed_pkgs:
+        for new_item in added_pkgs:
             if (
                 # TODO parse and filter the %name out and compare similarity of %version only
-                # %{name}-%{version}-%{release}.%{arch}
-                # TODO not sure if ratio is good idea we need to do a complete version comparison
+                # %{name}-%{version}-%{release}.%{arch} do not rely on .ratio()
+                # does not recognize changes like this:
+                # rust-uuid-0:1.11.0-2.fc42.src -> rust-uuid-0:1.13.2-1.fc43.src
+                # python-trio-websocket-0:0.12.0~dev^202501304247cd5-1.fc43.src -> python-trio-websocket-0:0.12.1-1.fc43.src
                 SequenceMatcher(None, old_item, new_item).ratio()
                 > 0.9
             ):
-                # TODO bette to do this on the output side
-                changed_out.append(f"{old_item} -> {new_item}")
-                # keep record of all changes regardless of added or removed
-                all_changes.add(new_item)
-                all_changes.add(old_item)
+                changed["old"].append(old_item)
+                changed["new"].append(new_item)
+                # TODO order matters here, probably not a great idea to blindly add each side to a list
+                # without checking if the item has the correct counterpart
 
-    print(f"CHANGED: {changed_out}")
+    return changed
 
-    # Print only new additions, sans the packaged that merely changed
-    new_additions = [i for i in added if i not in all_changes]
+
+def main():
+    # Parse both JSON files and create a set of all packages for old and new version
+    old_rpms = parse_rpm_json_file("compose_metadata/rpms_1802.json", PREFIX)
+    new_rpms = parse_rpm_json_file("compose_metadata/rpms_1902.json", PREFIX)
+
+    # Find new items
+    added = get_added_pkgs(old_rpms, new_rpms)
+
+    # Find removed items
+    removed = get_removed_pkgs(old_rpms, new_rpms)
+
+    # Find changed items
+    changed = get_changed_pkgs(removed, added)
+
+    print(f"CHANGED: {changed}")
+
+    # Print only completely new additions
+    new_additions = [
+        i for i in added if i not in set(changed["new"]).union(changed["old"])
+    ]
     print(f"ADDED: {new_additions}")
 
-    # Print only packages that have been completely removed, sans the packaged that merely changed
-    removed_packages = [i for i in removed if i not in all_changes]
+    # Print only packages that have been completely removed
+    removed_packages = [
+        i for i in removed if i not in set(changed["new"]).union(changed["old"])
+    ]
     print(f"REMOVED: {removed_packages}")
 
 
