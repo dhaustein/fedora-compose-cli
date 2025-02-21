@@ -1,6 +1,6 @@
 import pytest
 
-from main import Package, get_pkg
+from main import Package, parse_nevra
 
 
 def test_parse_dev_pkg():
@@ -14,7 +14,7 @@ def test_parse_dev_pkg():
         distro_version="fc43",
         arch="src",
     )
-    assert get_pkg(pkg_name) == expected_pkg
+    assert parse_nevra(pkg_name) == expected_pkg
 
 
 def test_parse_pkg():
@@ -28,7 +28,7 @@ def test_parse_pkg():
         distro_version="fc43",
         arch="src",
     )
-    assert get_pkg(pkg_name) == expected_pkg
+    assert parse_nevra(pkg_name) == expected_pkg
 
 
 def test_parse_dummy_test_pkg():
@@ -42,7 +42,7 @@ def test_parse_dummy_test_pkg():
         distro_version="",  # no distro version for this pkg
         arch="src",
     )
-    assert get_pkg(pkg_name) == expected_pkg
+    assert parse_nevra(pkg_name) == expected_pkg
 
 
 def test_parse_shim_pkg():
@@ -56,4 +56,4 @@ def test_parse_shim_pkg():
         distro_version="",  # no distro version for this pkg
         arch="src",
     )
-    assert get_pkg(pkg_name) == expected_pkg
+    assert parse_nevra(pkg_name) == expected_pkg
