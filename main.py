@@ -20,6 +20,30 @@ def parse_rpm_json_file(filepath: str, prefix: str) -> set[str]:
     return payloads
 
 
+def parse_pkg_nevra(pkg: str) -> Dict[str, str]:
+    """Parse package NEVRA string into component parts.
+
+    Format: {name}-{epoch}:{pkg_ver}-{pkg_rls}.{distro_rls}.{arch}
+    Example: rust-uuid-1:1.13.2-1.fc43.src ->
+    {name: rust-uuid, epoch: 1, version: 1.13.2, release: 1, fedora_version: fc43, arch: src}
+    """
+    # Split distro version and arch
+    nev, distro_rls, arch = pkg.rsplit(".", 2)
+    # Split name, epoch:version, and release
+    name, epoch_ver, pkg_rls = nev.rsplit("-", 2)
+    # Split epoch and pkg version
+    epoch, pkg_ver = epoch_ver.split(":")
+
+    return {
+        "name": name,
+        "epoch": epoch,
+        "version": pkg_ver,
+        "release": pkg_rls,
+        "fedora_version": distro_rls,
+        "arch": arch,
+    }
+
+
 def get_nochanged_pkgs(old: set[str], new: set[str]) -> set[str]:
     return old.intersection(new)
 
