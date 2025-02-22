@@ -1,4 +1,4 @@
-from typing import Dict
+from typing import Dict, List
 
 from rich.console import Console
 from rich.text import Text
@@ -35,3 +35,12 @@ def display_pkg_changes(
             f" CHANGED ({old_pkg.version}-{old_pkg.release} -> {new_pkg.version}-{new_pkg.release})"
         )
         console.print(text, style="yellow")
+
+
+def display_latest_dirs(dirs: List[tuple[str, str, int]]) -> None:
+    for dir in dirs:
+        name, timestamp, generation = dir
+        text = Text()
+        text.append(name, style="yellow")
+        text.append(f" {timestamp} ({generation})")
+        console.print(text)

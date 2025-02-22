@@ -7,7 +7,7 @@ from typing import Callable
 import ijson
 
 from cli_argparse import create_argparser
-from cli_output import display_pkg_changes
+from cli_output import display_latest_dirs, display_pkg_changes
 from rpm_package import (
     Package,
     PackageSet,
@@ -47,7 +47,7 @@ def main():
 
     if args.days_ago:
         rawhide_dirs = get_latest_rawhide_compose_dirs(args.days_ago)
-        print(rawhide_dirs)
+        display_latest_dirs(rawhide_dirs)
         exit()
 
     # Parse both JSON files in parallel and create two sets of Packages for old and new compose
