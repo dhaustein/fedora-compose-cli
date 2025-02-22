@@ -18,6 +18,9 @@ class Package:
     def __hash__(self) -> int:
         return hash(self.full_name)  # assuming full name is unique
 
+    def __getitem__(self, key: str) -> str:
+        return getattr(self, key)
+
 
 T = TypeVar("T", bound=Package)
 
