@@ -1,4 +1,4 @@
-import pytest
+import pytest  # noqa: F401
 
 from main import Package, parse_nevra
 
