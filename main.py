@@ -18,6 +18,16 @@ from rpm_package import (
 
 
 def load_compose_json_file(filepath: str, prefix: str, get_pkg: Callable) -> PackageSet:
+    """Load and parse packages from a JSON compose file.
+
+    Args:
+        filepath: Path to the JSON file containing package information
+        prefix: JSON prefix to locate package data within the file
+        get_pkg: Callable that converts raw package data into Package objects
+
+    Returns:
+        PackageSet containing all parsed Package objects from the file
+    """
     payloads: PackageSet[Package] = PackageSet()
     # TODO use path from Pathlib instead of str
     with open(filepath, "br") as f:
