@@ -1,12 +1,12 @@
 import pytest  # noqa: F401
 
-from main import (
+from json_parse import load_compose_json_file
+from rpm_package import (
     Package,
     PackageSet,
     get_added_pkgs,
     get_changed_pkgs,
     get_removed_pkgs,
-    load_compose_json_file,
     parse_nevra,
 )
 
