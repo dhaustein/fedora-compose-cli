@@ -44,7 +44,7 @@ def filter_dirs_by_days_ago(
         if timestamp == "latest":
             latest_only.append(compose_dir)
             continue
-        if datetime.strptime(timestamp, "%Y%m%d") < cutoff_date:
+        if datetime.strptime(timestamp, "%Y%m%d") > cutoff_date:
             latest_only.append(compose_dir)
 
     return latest_only
