@@ -38,8 +38,8 @@ def display_pkg_changes(
 
 
 def display_latest_dirs(dirs: List[tuple[str, str, int]]) -> None:
-    for dir in dirs:
-        name, timestamp, generation = dir
+    for dir_name in dirs:
+        name, timestamp, generation = dir_name
         text = Text()
         text.append(name, style="green")
         text.append(f"_{timestamp}_", style="cyan")
