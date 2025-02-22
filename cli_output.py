@@ -41,6 +41,7 @@ def display_latest_dirs(dirs: List[tuple[str, str, int]]) -> None:
     for dir in dirs:
         name, timestamp, generation = dir
         text = Text()
-        text.append(name, style="yellow")
-        text.append(f" {timestamp} ({generation})")
+        text.append(name, style="green")
+        text.append(f"_{timestamp}_", style="cyan")
+        text.append(str(generation))
         console.print(text)
