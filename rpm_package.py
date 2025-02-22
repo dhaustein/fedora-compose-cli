@@ -103,6 +103,7 @@ def get_removed_pkgs(old: PackageSet, new: PackageSet) -> PackageSet:
 def get_changed_pkgs(
     old: PackageSet[Package], new: PackageSet[Package]
 ) -> Dict[str, PackageSet[Package]]:
+
     changed: Dict[str, PackageSet[Package]] = {"old": PackageSet(), "new": PackageSet()}
 
     old_by_name = {pkg.name: pkg for pkg in old}
