@@ -1,8 +1,9 @@
 import argparse
+from argparse import RawTextHelpFormatter
 
 EPILOG_TEXT = """Examples:
-python main.py -o path/to/old.json -n path/to/new.json
-python main.py -d 3
+$ python main.py -o path/to/old.json -n path/to/new.json
+$ python main.py -d 3
 """
 
 
@@ -11,6 +12,7 @@ def create_argparser() -> argparse.ArgumentParser:
         description="""Python CLI tools to parse two Fedora Rawhide composes and return lists of packages that
           have been removed, added or changed between the two versions.""",
         epilog=EPILOG_TEXT,
+        formatter_class=RawTextHelpFormatter,
     )
     parser.add_argument(
         "-o",
