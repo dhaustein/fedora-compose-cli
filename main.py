@@ -1,5 +1,6 @@
 from concurrent.futures import ProcessPoolExecutor
 from functools import partial
+from pathlib import Path
 from time import perf_counter
 from typing import Callable
 
@@ -17,7 +18,9 @@ from rpm_package import (
 )
 
 
-def load_compose_json_file(filepath: str, prefix: str, get_pkg: Callable) -> PackageSet:
+def load_compose_json_file(
+    filepath: Path, prefix: str, get_pkg: Callable
+) -> PackageSet:
     """Load and parse packages from a JSON compose file.
 
     Args:
@@ -29,8 +32,7 @@ def load_compose_json_file(filepath: str, prefix: str, get_pkg: Callable) -> Pac
         PackageSet containing all parsed Package objects from the file
     """
     payloads: PackageSet[Package] = PackageSet()
-    # TODO use path from Pathlib instead of str
-    with open(filepath, "br") as f:
+    with open(filepath, mode="rb") as f:
         pkgs = ijson.kvitems(f, prefix, use_float=True)
         for k, v in pkgs:
             payloads.add(get_pkg(k))
@@ -47,11 +49,10 @@ def main():
     with ProcessPoolExecutor() as pool:
         result = pool.map(
             load_compose_parse_nerva,
-            [args.old_rpm, args.new_rpm],
+            [Path(args.old_rpm), Path(args.new_rpm)],
             [args.json_prefix, args.json_prefix],
         )
     old_pkgs, new_pkgs = result
-
     removed = get_removed_pkgs(old_pkgs, new_pkgs)
     added = get_added_pkgs(old_pkgs, new_pkgs)
     changed = get_changed_pkgs(removed, added)
