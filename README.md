@@ -59,8 +59,6 @@ $ ruff check
 
 ## TODO
 
-- feat: output a list of Rawhide composes from the last N days, maybe use `from urllib.request import urlopen`
-  - requires calling and parsing the timestamps in folders at URL https://kojipkgs.fedoraproject.org/compose/rawhide/
 - feat: add option to output a json file as a machine readable output format
 - extra: do some performance profiling to learn where the bottlenecks are
 - extra: add input validation (Pydantic?)

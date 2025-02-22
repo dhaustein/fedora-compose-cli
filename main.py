@@ -16,6 +16,7 @@ from rpm_package import (
     get_removed_pkgs,
     parse_nevra,
 )
+from web_parse import get_latest_rawhide_compose_dirs
 
 
 def load_compose_json_file(
@@ -43,6 +44,11 @@ def load_compose_json_file(
 def main():
     parser = create_argparser()
     args = parser.parse_args()
+
+    if args.days_ago:
+        rawhide_dirs = get_latest_rawhide_compose_dirs(args.days_ago)
+        print(rawhide_dirs)
+        exit()
 
     # Parse both JSON files in parallel and create two sets of Packages for old and new compose
     load_compose_parse_nerva = partial(load_compose_json_file, get_pkg=parse_nevra)
