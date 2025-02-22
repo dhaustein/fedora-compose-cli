@@ -1,4 +1,3 @@
-import argparse
 from concurrent.futures import ProcessPoolExecutor
 from functools import partial
 from time import perf_counter
@@ -6,7 +5,8 @@ from typing import Callable
 
 import ijson
 
-from pretty_output import display_pkgs_table
+from cli_argparse import create_argparser
+from cli_output import display_pkg_changes
 from rpm_package import (
     Package,
     PackageSet,
@@ -15,9 +15,6 @@ from rpm_package import (
     get_removed_pkgs,
     parse_nevra,
 )
-
-# TODO change into config file
-PREFIX: str = "payload.rpms.Everything.x86_64"
 
 
 def load_compose_json_file(filepath: str, prefix: str, get_pkg: Callable) -> PackageSet:
@@ -32,19 +29,7 @@ def load_compose_json_file(filepath: str, prefix: str, get_pkg: Callable) -> Pac
 
 
 def main():
-    parser = argparse.ArgumentParser(
-        description="""Python CLI tools to parse two Fedora Rawhide composes and return lists of packages that
-          have been removed, added or changed between the two versions."""
-    )
-    parser.add_argument(dest="old_rpm", help="Filepath to old RPM JSON file")
-    parser.add_argument(dest="new_rpm", help="Filepath to new RPM JSON file")
-    parser.add_argument(
-        "-p",
-        "--prefix",
-        dest="json_prefix",
-        default=PREFIX,
-        help="The prefix used to specify the JSON object to parse from the files, default: payload.rpms.Everything.x86_64",
-    )
+    parser = create_argparser()
     args = parser.parse_args()
 
     # Parse both JSON files in parallel and create two sets of Packages for old and new compose
