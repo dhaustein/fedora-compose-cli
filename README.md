@@ -15,13 +15,18 @@ The tool can process JSON compose files and output changes in both human (CLI) a
 Run the script for two JSON composes
 
 ```bash
-$ python main.py path/to/old_rpms.json path/to/new_rpms.json
+$ python main.py -o path/to/old.json -n path/to/new.json
+```
+
+Obtain a list of Rawhide composes from N days ago
+```bash
+$ python main.py -d 5
 ```
 
 Display help
 
 ```bash
-$ python main.py --h
+$ python main.py -h
 ```
 
 ## Installation
@@ -57,7 +62,7 @@ Run linting
 $ ruff check
 ```
 
-## TODO
+## TODO?
 
 - feat: add option to output a json file as a machine readable output format
 - extra: do some performance profiling to learn where the bottlenecks are
